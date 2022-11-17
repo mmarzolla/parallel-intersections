@@ -21,7 +21,7 @@ DATA_PATH := ${HOME}/intersections-data
 CXXFLAGS+=-Wall -std=c++14 -pedantic -O2 -fopenmp -I${THRUST_INCLUDE_PATH} -I${THRUST_INCLUDE_PATH}/dependencies/libcudacxx/include
 CPPFLAGS+=
 LDFLAGS+=-fopenmp
-LDLIBS+=-L${CYUDA_LIB_PATH} -lm -lrt -lhts -lcudart
+LDLIBS+=-L${CUDA_LIB_PATH} -lm -lrt -lhts -lcudart
 NVCC:=nvcc
 NVCFLAGS+=-x cu -O2 -I${THRUST_INCLUDE_PATH} -I${THRUST_INCLUDE_PATH}/dependencies/libcudacxx/include -I${THRUST_INCLUDE_PATH}/dependencies/cub
 
