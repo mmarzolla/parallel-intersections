@@ -247,7 +247,7 @@ size_t thrust_count(const std::vector<interval> &upd,
     // intervals in `upd` that overlap with `upd[i]`
     th::host_vector<int> counts(d_counts);
 
-#if 0
+#if 1
     // Compute total number of intersections. This is not useful if
     // we are only interested in per-interval intersection counts, so
     // it is commented out.
