@@ -12,6 +12,8 @@ CUDA_LIB_PATH := /usr/local/cuda/lib64
 # test the program)
 DATA_PATH := ${HOME}/intersections-data
 
+EXE_BITS := ${HOME}/src/bits/bin/bits_count_per_interval_cuda
+
 ##############################################################################
 ##
 ## End Configuration (you should not need to modify anything below)
@@ -62,6 +64,10 @@ test.big: $(EXES)
 	for ALGO in $(EXES); do \
 		./$${ALGO} -m ${DATA_PATH}/HG00258.mapped.ILLUMINA.bwa.GBR.exome.20120522.bam -d ${DATA_PATH}/hsa37-cds.bed ; \
 	done
+
+test.bits: $(EXE_CUDA) $(EXE_BITS)
+	./$(EXE_CUDA) -m ${DATA_PATH}/HG00258.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam -d ${DATA_PATH}/hsa37-cds-split.bed
+	$(EXE_BITS) -a ${DATA_PATH}/HG00258.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bed -b ${DATA_PATH}/hsa37-cds-split.bed -g ${DATA_PATH}/hsa37.genome
 
 read_bam: read_bam.cpp
 	$(CXX) -o read_bam read_bam.cpp -lhts
