@@ -12,7 +12,9 @@ CUDA_LIB_PATH := /usr/local/cuda/lib64
 # test the program)
 DATA_PATH := ${HOME}/intersections-data
 
-EXE_BITS := ${HOME}/src/bits/bin/bits_count_per_interval_cuda
+BITS_COUNT_PER_INTERVAL := ${HOME}/src/bits/bin/bits_count_per_interval_cuda
+
+BITS_COUNT := ${HOME}/src/bits/bin/bits_count_cuda
 
 ##############################################################################
 ##
@@ -65,9 +67,19 @@ test.big: $(EXES)
 		./$${ALGO} -m ${DATA_PATH}/HG00258.mapped.ILLUMINA.bwa.GBR.exome.20120522.bam -d ${DATA_PATH}/hsa37-cds.bed ; \
 	done
 
-test.bits: $(EXE_CUDA) $(EXE_BITS)
+test.bits: $(EXE_CUDA) $(BITS_COUNT_PER_INTERVAL) $(BITS_COUNT)
+	@echo "**"
+	@echo "** ${EXE_CUDA}"
+	@echo "**"
 	./$(EXE_CUDA) -m ${DATA_PATH}/HG00258.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam -d ${DATA_PATH}/hsa37-cds-split.bed
-	$(EXE_BITS) -a ${DATA_PATH}/HG00258.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bed -b ${DATA_PATH}/hsa37-cds-split.bed -g ${DATA_PATH}/hsa37.genome
+	@echo "**"
+	@echo "** ${BITS_COUNT_PER_INTERVAL}"
+	@echo "**"
+	$(BITS_COUNT_PER_INTERVAL) -a ${DATA_PATH}/HG00258.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bed -b ${DATA_PATH}/hsa37-cds-split.bed -g ${DATA_PATH}/hsa37.genome
+	@echo "**"
+	@echo "** ${BITS_COUNT}"
+	@echo "**"
+	$(BITS_COUNT) -a ${DATA_PATH}/HG00258.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bed -b ${DATA_PATH}/hsa37-cds-split.bed -g ${DATA_PATH}/hsa37.genome
 
 read_bam: read_bam.cpp
 	$(CXX) -o read_bam read_bam.cpp -lhts
