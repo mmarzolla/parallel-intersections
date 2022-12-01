@@ -59,12 +59,12 @@ check: read_bam $(EXES)
 
 test.med: $(EXES)
 	for ALGO in $(EXES); do \
-		./$${ALGO} -m ${DATA_PATH}/HG00258.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam -d ${DATA_PATH}/hsa37-cds-chr20.bed ; \
+		./$${ALGO} -m ${DATA_PATH}/HG00258.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam -d ${DATA_PATH}/hsa37-cds-chr20-split.bed ; \
 	done
 
 test.big: $(EXES)
 	for ALGO in $(EXES); do \
-		./$${ALGO} -m ${DATA_PATH}/HG00258.mapped.ILLUMINA.bwa.GBR.exome.20120522.bam -d ${DATA_PATH}/hsa37-cds.bed ; \
+		./$${ALGO} -m ${DATA_PATH}/HG00258.mapped.ILLUMINA.bwa.GBR.exome.20120522.bam -d ${DATA_PATH}/hsa37-cds-split.bed ; \
 	done
 
 test.bits: $(EXE_CUDA) $(BITS_COUNT_PER_INTERVAL) $(BITS_COUNT)
@@ -84,32 +84,32 @@ test.bits: $(EXE_CUDA) $(BITS_COUNT_PER_INTERVAL) $(BITS_COUNT)
 read_bam: read_bam.cpp
 	$(CXX) -o read_bam read_bam.cpp -lhts
 
-$(EXE_OMP): main.o interval.o thrust_count_omp.o
+$(EXE_OMP): main.o interval.o thrust_count_omp.o utils.o
 	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
-$(EXE_OMP_STL): main.o interval.o thrust_count_omp_stl.o
+$(EXE_OMP_STL): main.o interval.o thrust_count_omp_stl.o utils.o
 	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
-$(EXE_SEQ): main.o interval.o thrust_count_seq.o
+$(EXE_SEQ): main.o interval.o thrust_count_seq.o utils.o
 	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
-$(EXE_CUDA): main.o interval.o thrust_count_cuda.o
+$(EXE_CUDA): main.o interval.o thrust_count_cuda.o utils.o
 	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
 thrust_count_omp.o: CPPFLAGS+=-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_OMP -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP # -D_GLIBCXX_PARALLEL
-thrust_count_omp.o: thrust_count.cc thrust_count.hh
+thrust_count_omp.o: thrust_count.cc thrust_count.hh utils.hh
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 thrust_count_omp_stl.o: CPPFLAGS+=-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CPP -DUSE_STL_SORT # -D_GLIBCXX_PARALLEL
-thrust_count_omp_stl.o: thrust_count.cc thrust_count.hh
+thrust_count_omp_stl.o: thrust_count.cc thrust_count.hh utilshh
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 thrust_count_seq.o: CPPFLAGS+=-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CPP
-thrust_count_seq.o: thrust_count.cc thrust_count.hh
+thrust_count_seq.o: thrust_count.cc thrust_count.hh utils.hh
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 thrust_count_cuda.o: NVCFLAGS+=-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA
-thrust_count_cuda.o: thrust_count.cc thrust_count.hh
+thrust_count_cuda.o: thrust_count.cc thrust_count.hh utils.hh
 	$(NVCC) $(NVCFLAGS) -c $< -o $@
 
 figures: plot_speedup.gp plot_wct.gp

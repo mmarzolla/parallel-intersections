@@ -35,6 +35,7 @@
 #include <thrust/device_vector.h>
 #include "interval.hh"
 #include "endpoint.hh"
+#include "utils.hh"
 
 namespace th = thrust;
 
@@ -202,12 +203,15 @@ size_t thrust_count(const std::vector<interval> &upd,
                   th::make_zip_iterator(d_endpoints.begin() + 2*n, d_endpoints.begin() + 2*n + m),
                   make_endpoint(endpoint::UPDATE));
 
+    const double tstart = now();
 #if (USE_STL_SORT && !__CUDACC__)
 #error std::sort is not compatible with th:device_vector
     // __gnu_parallel::sort(d_endpoints.begin(), d_endpoints.end());
 #else
     th::sort(d_endpoints.begin(), d_endpoints.end());
 #endif
+    const double sort_time = now() - tstart;
+    std::cout << "Sort time " << sort_time << std::endl;
 
     /* left_idx[i] is the position (index) in the sorted endpoint
        array of the left endpoint of subscription interval with id==i;

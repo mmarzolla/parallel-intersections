@@ -28,22 +28,15 @@
 #include <cassert>
 #include <unistd.h>
 #include <cstring>
-#include <ctime>
 #include "interval.hh"
 #include "thrust_count.hh"
+#include "utils.hh"
 
 extern "C" {
 #include <htslib/sam.h>
 }
 
 using namespace std;
-
-double now( void )
-{
-    struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts );
-    return ts.tv_sec + (double)ts.tv_nsec / 1e9;
-}
 
 void print_help(const char *exe_name)
 {
@@ -53,14 +46,6 @@ void print_help(const char *exe_name)
          << "-d BED_file_name" << endl
          << "-N generate n_intervals random intervals (half A, half B)" << endl
          << "-h\t\tThis help message" << endl << endl;
-}
-
-/**
- * Returns a random integer in [a, b]
- */
-int randab(int a, int b)
-{
-    return (a + rand() % (b-a+1));
 }
 
 /**
