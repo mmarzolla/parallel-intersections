@@ -211,7 +211,7 @@ size_t thrust_count(const std::vector<interval> &upd,
     th::sort(d_endpoints.begin(), d_endpoints.end());
 #endif
     const double sort_time = now() - tstart;
-    std::cout << "Sort time " << sort_time << std::endl;
+    // std::cout << "Sort time " << sort_time << std::endl;
 
     /* left_idx[i] is the position (index) in the sorted endpoint
        array of the left endpoint of subscription interval with id==i;

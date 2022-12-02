@@ -134,7 +134,7 @@ void test_with_bam_and_bed( const char* bam_file_name, const char *bed_file_name
             cout << "Contig \"" <<
                 contig->first << "\" has " <<
                 alignments.at(tid).size() << " alignments and " <<
-                targets.at(tid).size() << " target intervals" << endl;
+                targets.at(tid).size() << " target intervals... ";
 
             // split target intervals into 1-base windows
             vector<interval> windows;
@@ -168,7 +168,9 @@ void test_with_bam_and_bed( const char* bam_file_name, const char *bed_file_name
         }
       }
     }
-    cout << "Intersection time " << intersection_time/nreps << endl;
+    cout << "**" << endl
+	 << "** Average intersection time (s) " << intersection_time/nreps << endl
+	 << "**" << endl << endl;
 }
 
 /**
