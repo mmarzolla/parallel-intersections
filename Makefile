@@ -25,7 +25,7 @@ BITS_COUNT := ${HOME}/src/bits/bin/bits_count_cuda
 CXXFLAGS+=-Wall -std=c++14 -pedantic -O2 -fopenmp -I${THRUST_INCLUDE_PATH} -I${THRUST_INCLUDE_PATH}/dependencies/libcudacxx/include
 CPPFLAGS+=
 LDFLAGS+=-fopenmp
-LDLIBS+=-L${CUDA_LIB_PATH} -lm -lrt -lhts -lcudart
+LDLIBS+=-lm -lrt -lhts
 NVCC:=nvcc
 NVCFLAGS+=-x cu -O2 -I${THRUST_INCLUDE_PATH} -I${THRUST_INCLUDE_PATH}/dependencies/libcudacxx/include -I${THRUST_INCLUDE_PATH}/dependencies/cub
 
