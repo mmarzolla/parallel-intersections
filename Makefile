@@ -59,12 +59,12 @@ check: read_bam $(EXES)
 
 test.med: $(EXES)
 	for ALGO in $(EXES); do \
-		./$${ALGO} -m ${DATA_PATH}/HG00258.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam -d ${DATA_PATH}/hsa37-cds-chr20-split.bed ; \
+		./$${ALGO} -r 5 -m ${DATA_PATH}/HG00258.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam -d ${DATA_PATH}/hsa37-cds-chr20-split.bed ; \
 	done
 
 test.big: $(EXES)
 	for ALGO in $(EXES); do \
-		./$${ALGO} -m ${DATA_PATH}/HG00258.mapped.ILLUMINA.bwa.GBR.exome.20120522.bam -d ${DATA_PATH}/hsa37-cds-split.bed ; \
+		./$${ALGO} -r 5 -m ${DATA_PATH}/HG00258.mapped.ILLUMINA.bwa.GBR.exome.20120522.bam -d ${DATA_PATH}/hsa37-cds-split.bed ; \
 	done
 
 test.bits: $(EXE_CUDA) $(BITS_COUNT_PER_INTERVAL) $(BITS_COUNT)

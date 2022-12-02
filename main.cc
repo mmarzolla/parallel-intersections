@@ -67,7 +67,7 @@ void init( vector<interval> &v, int n )
 /**
  *
  */
-void test_with_bam_and_bed( const char* bam_file_name, const char *bed_file_name )
+void test_with_bam_and_bed( const char* bam_file_name, const char *bed_file_name, int nreps )
 {
     // READ BAM
     samFile *fp_in = hts_open(bam_file_name,"r"); // open bam file
@@ -123,7 +123,11 @@ void test_with_bam_and_bed( const char* bam_file_name, const char *bed_file_name
     cout << "Loaded " << targets.size() << " target intervals" << endl;
 
     double intersection_time = 0;
-    for (auto contig = chrom_str2tid.begin(); contig != chrom_str2tid.end(); contig++) {
+    for (int r = 0; r<nreps; r++) {
+      cout << "**" << endl
+	   << "** Replication " << r << " of " << nreps << endl
+	   << "**" << endl;
+      for (auto contig = chrom_str2tid.begin(); contig != chrom_str2tid.end(); contig++) {
         const int32_t tid = contig->second;
         // cout << contig << ":" << tid << endl;
         if (alignments.count(tid) && targets.count(tid)) {
@@ -162,26 +166,34 @@ void test_with_bam_and_bed( const char* bam_file_name, const char *bed_file_name
             const double elapsed = now() - tstart;
             intersection_time += elapsed;
         }
+      }
     }
-    cout << "Intersection time " << intersection_time << endl;
+    cout << "Intersection time " << intersection_time/nreps << endl;
 }
 
 /**
  *
  */
-void test_with_random_input(int N)
+void test_with_random_input(int N, int nreps)
 {
     vector<interval> A, B;
-
+    double intersection_time = 0.0;
+    
     cout << "Generating random input..." << endl;
 
     init(A, N/2);
     init(B, N/2);
 
-    const double tstart = now();
-    thrust_count(A, B);
-    const double elapsed = now() - tstart;
-    cout << "Intersection time " << elapsed << endl;
+    for (int r=0; r<nreps; r++) {
+      cout << "**" << endl
+	   << "** Replication " << r << " of " << nreps << endl
+	   << "**" << endl;
+      const double tstart = now();
+      thrust_count(A, B);
+      const double elapsed = now() - tstart;
+      intersection_time += elapsed;
+    }
+    cout << "Intersection time " << intersection_time/nreps << endl;
 }
 
 
@@ -191,9 +203,10 @@ int main(int argc, char *argv[])
     const char* bed_file_name = NULL;
     int opt;
     int N = -1;
-
+    int nreps = 1;
+    
     // parse command line arguments
-    while ((opt = getopt(argc, argv, "hm:d:N:")) != -1) {
+    while ((opt = getopt(argc, argv, "hm:d:N:r:")) != -1) {
         switch (opt) {
         case 'm': // BAM file name
             bam_file_name = optarg;
@@ -204,6 +217,9 @@ int main(int argc, char *argv[])
         case 'N': // generate random input
             N = atoi(optarg);
             break;
+	case 'r': // number of replications
+	  nreps = atoi(optarg);
+	  break;
         default:
             cerr << "FATAL: Unrecognized option " << opt << endl << endl;
             print_help(argv[0]);
@@ -222,9 +238,9 @@ int main(int argc, char *argv[])
     }
 
     if (N > 0) {
-        test_with_random_input(N);
+      test_with_random_input(N, nreps);
     } else {
-        test_with_bam_and_bed(bam_file_name, bed_file_name);
+      test_with_bam_and_bed(bam_file_name, bed_file_name, nreps);
     }
     return EXIT_SUCCESS;
 }
