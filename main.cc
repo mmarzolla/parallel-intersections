@@ -40,11 +40,12 @@ using namespace std;
 
 void print_help(const char *exe_name)
 {
-    cerr << "Usage: " << exe_name << " [-N n_intervals] [-m BAM_file_name -d BED_file_name]" << endl << endl
+    cerr << "Usage: " << exe_name << " [-N n_intervals] [-m BAM_file_name -d BED_file_name] [-n nreps]" << endl << endl
          << "where:" << endl << endl
          << "-m BAM_file_name" << endl
          << "-d BED_file_name" << endl
-         << "-N generate n_intervals random intervals (half A, half B)" << endl
+         << "-N n_intervals\tgenerate n_intervals random intervals (half A, half B)" << endl
+         << "-r nreps\tperforms nreps replications" << endl
          << "-h\t\tThis help message" << endl << endl;
 }
 
@@ -124,49 +125,49 @@ void test_with_bam_and_bed( const char* bam_file_name, const char *bed_file_name
 
     double intersection_time = 0;
     for (int r = 0; r<nreps; r++) {
-      cout << "**" << endl
-	   << "** Replication " << r << " of " << nreps << endl
-	   << "**" << endl;
-      for (auto contig = chrom_str2tid.begin(); contig != chrom_str2tid.end(); contig++) {
-        const int32_t tid = contig->second;
-        // cout << contig << ":" << tid << endl;
-        if (alignments.count(tid) && targets.count(tid)) {
-            cout << "Contig \"" <<
-                contig->first << "\" has " <<
-                alignments.at(tid).size() << " alignments and " <<
-                targets.at(tid).size() << " target intervals... ";
+        cout << "**" << endl
+             << "** Replication " << r << " of " << nreps << endl
+             << "**" << endl;
+        for (auto contig = chrom_str2tid.begin(); contig != chrom_str2tid.end(); contig++) {
+            const int32_t tid = contig->second;
+            // cout << contig << ":" << tid << endl;
+            if (alignments.count(tid) && targets.count(tid)) {
+                cout << "Contig \"" <<
+                    contig->first << "\" has " <<
+                    alignments.at(tid).size() << " alignments and " <<
+                    targets.at(tid).size() << " target intervals... ";
 
-            // split target intervals into 1-base windows
-            vector<interval> windows;
-            int id = 0;
-            for (auto t = targets.at(tid).begin(); t != targets.at(tid).end(); t++) {
+                // split target intervals into 1-base windows
+                vector<interval> windows;
+                int id = 0;
+                for (auto t = targets.at(tid).begin(); t != targets.at(tid).end(); t++) {
 #if 0
-                // The following loop replaces an interval [a, b] with
-                // a set of non-overlapping unitary intervals [a,
-                // a+1], [a+1, a+2], ... [b-1, b]
-                for (int32_t pos = t->lower; pos < t->upper; pos++) {
+                    // The following loop replaces an interval [a, b] with
+                    // a set of non-overlapping unitary intervals [a,
+                    // a+1], [a+1, a+2], ... [b-1, b]
+                    for (int32_t pos = t->lower; pos < t->upper; pos++) {
+                        interval i;
+                        i.id = id++;
+                        i.lower = pos;
+                        i.upper = pos + 1;
+                        i.payload = 0;
+                        windows.push_back(i);
+                    }
+#else
                     interval i;
                     i.id = id++;
-                    i.lower = pos;
-                    i.upper = pos + 1;
+                    i.lower = t->lower;
+                    i.upper = t->upper;
                     i.payload = 0;
                     windows.push_back(i);
-                }
-#else
-                interval i;
-                i.id = id++;
-                i.lower = t->lower;
-                i.upper = t->upper;
-                i.payload = 0;
-                windows.push_back(i);
 #endif
+                }
+                const double tstart = now();
+                thrust_count(alignments.at(tid), windows);
+                const double elapsed = now() - tstart;
+                intersection_time += elapsed;
             }
-            const double tstart = now();
-            thrust_count(alignments.at(tid), windows);
-            const double elapsed = now() - tstart;
-            intersection_time += elapsed;
         }
-      }
     }
     cout << "**" << endl
 	 << "** Average intersection time (s) " << intersection_time/nreps << endl
@@ -178,22 +179,20 @@ void test_with_bam_and_bed( const char* bam_file_name, const char *bed_file_name
  */
 void test_with_random_input(int N, int nreps)
 {
-    vector<interval> A, B;
     double intersection_time = 0.0;
-    
-    cout << "Generating random input..." << endl;
-
-    init(A, N/2);
-    init(B, N/2);
 
     for (int r=0; r<nreps; r++) {
-      cout << "**" << endl
-	   << "** Replication " << r << " of " << nreps << endl
-	   << "**" << endl;
-      const double tstart = now();
-      thrust_count(A, B);
-      const double elapsed = now() - tstart;
-      intersection_time += elapsed;
+        vector<interval> A, B;
+        cout << "**" << endl
+             << "** Replication " << r << " of " << nreps << endl
+             << "**" << endl;
+        cout << "Generating random input..." << endl;
+        init(A, N/2);
+        init(B, N/2);
+        const double tstart = now();
+        thrust_count(A, B);
+        const double elapsed = now() - tstart;
+        intersection_time += elapsed;
     }
     cout << "Intersection time " << intersection_time/nreps << endl;
 }
@@ -206,7 +205,7 @@ int main(int argc, char *argv[])
     int opt;
     int N = -1;
     int nreps = 1;
-    
+
     // parse command line arguments
     while ((opt = getopt(argc, argv, "hm:d:N:r:")) != -1) {
         switch (opt) {
@@ -220,8 +219,8 @@ int main(int argc, char *argv[])
             N = atoi(optarg);
             break;
 	case 'r': // number of replications
-	  nreps = atoi(optarg);
-	  break;
+            nreps = atoi(optarg);
+            break;
         default:
             cerr << "FATAL: Unrecognized option " << opt << endl << endl;
             print_help(argv[0]);
