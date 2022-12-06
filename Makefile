@@ -93,6 +93,7 @@ $(EXE_OMP_STL): main.o interval.o thrust_count_omp_stl.o utils.o
 $(EXE_SEQ): main.o interval.o thrust_count_seq.o utils.o
 	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
+$(EXE_CUDA): LDLIBS+=-lcudart
 $(EXE_CUDA): main.o interval.o thrust_count_cuda.o utils.o
 	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
