@@ -37,7 +37,7 @@ for ALGO in seq omp cuda; do
     echo "# Algorithm: ${ALGO}" >> ${FNAME}
     echo "# Date: `date`" >> ${FNAME}
     echo "# Legend:" >> ${FNAME}
-    echo "# n_intervals time_sec" > ${FNAME}
+    echo "# n_intervals time_sec" >> ${FNAME}
     for SIZE in `seq $FROM_SIZE $STEP_SIZE $TO_SIZE`; do
         echo -n "$ALGO ${SIZE}/${TO_SIZE} "
         TIME=$(${EXE} -r ${NREPS} -N ${SIZE} | grep -i "Intersection time" | egrep -o "[[:digit:]\.]+")
