@@ -9,7 +9,7 @@
 #
 # ./test_wct.sh
 #
-# Last modified 2022-10-01 by Moreno Marzolla
+# Last modified 2022-12-06 by Moreno Marzolla
 
 # number of replications
 NREPS=5
@@ -24,8 +24,8 @@ OUT_DIR=test_results
 
 mkdir -p ${OUT_DIR}
 
-for ALGO in thrust_seq thrust_omp thrust_cuda; do
-    EXE="./intersections_${ALGO}"
+for ALGO in seq omp cuda; do
+    EXE="./intersections_thrust_${ALGO}"
 
     if [ ! -f ${EXE} ]; then
         echo "FATAL: Missing executable \"${EXE}\""
@@ -36,18 +36,13 @@ for ALGO in thrust_seq thrust_omp thrust_cuda; do
     echo "# Machine: `hostname`" > ${FNAME}
     echo "# Algorithm: ${ALGO}" >> ${FNAME}
     echo "# Date: `date`" >> ${FNAME}
+    echo "# Legend:" >> ${FNAME}
     echo "# n_intervals time_sec" > ${FNAME}
     for SIZE in `seq $FROM_SIZE $STEP_SIZE $TO_SIZE`; do
         echo -n "$ALGO $SIZE "
-        TSUM=0
-        for REP in `seq 1 $NREPS`; do
-            TIME=$(${EXE} -N ${SIZE} | grep -i "Intersection time" | egrep -o "[[:digit:]\.]+")
-            echo -n "$REP"
-            TSUM=$(echo "$TIME + $TSUM" | bc -l)
-        done
-        TAVE=$(echo "$TSUM / $NREPS" | bc -l)
-        echo "$SIZE $TAVE" >> ${FNAME}
-        echo " $TAVE"
+        TIME=$(${EXE} -r ${NREPS} -N ${SIZE} | grep -i "Intersection time" | egrep -o "[[:digit:]\.]+")
+        echo "$SIZE $TIME" >> ${FNAME}
+        echo "$TIME"
     done
     echo
 done

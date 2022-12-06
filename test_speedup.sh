@@ -5,7 +5,7 @@
 #
 # ./test_speedup.sh
 #
-# Last modified 2022-10-03 by Moreno Marzolla
+# Last modified 2022-12-06 by Moreno Marzolla
 #
 
 # number of replications
@@ -30,19 +30,13 @@ for ALGO in omp; do
     echo "# Algorithm: ${ALGO}" >> ${FNAME}
     echo "# Date: `date`" >> ${FNAME}
     echo "# N of intervals: $SIZE" >> ${FNAME}
+    echo "# Legend:" >> ${FNAME}
     echo "# P time_sec" >> ${FNAME}
     NPROC=`cat /proc/cpuinfo | grep processor | wc -l`
     for P in `seq 1 $NPROC` ; do
-        echo -n "$P " >> ${FNAME}
-        echo -n "P=$P "
-        TSUM=0
-        for REP in `seq 1 $NREPS`; do
-            TIME=$(OMP_NUM_THREADS=$P ${EXE} -N ${SIZE} | grep -i "Intersection time" | egrep -o "[[:digit:]\.]+")
-            echo -n "$REP"
-            TSUM=$(echo "$TIME + $TSUM" | bc -l)
-        done
-        TAVE=$(echo "$TSUM / $NREPS" | bc -l)
-        echo " $TAVE" >> ${FNAME}
-        echo " $TAVE"
+        echo -n "$ALGO $P "
+        TIME=$(OMP_NUM_THREADS=$P ${EXE} -r ${NREPS} -N ${SIZE} | grep -i "Intersection time" | egrep -o "[[:digit:]\.]+")
+        echo "$P $TIME" >> ${FNAME}
+        echo "$TIME"
     done
 done
