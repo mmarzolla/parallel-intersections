@@ -34,7 +34,7 @@ for ALGO in omp; do
     echo "# P time_sec" >> ${FNAME}
     NPROC=`cat /proc/cpuinfo | grep processor | wc -l`
     for P in `seq 1 $NPROC` ; do
-        echo -n "$ALGO $P "
+        echo -n "$ALGO $P/$NPROC "
         TIME=$(OMP_NUM_THREADS=$P ${EXE} -r ${NREPS} -N ${SIZE} | grep -i "Intersection time" | egrep -o "[[:digit:]\.]+")
         echo "$P $TIME" >> ${FNAME}
         echo "$TIME"
