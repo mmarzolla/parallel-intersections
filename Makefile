@@ -35,18 +35,21 @@ EXE:=intersections
 # Thrust-based OpenMPversion
 EXE_OMP:=${EXE}_thrust_omp
 
-# Thrust-based OpenMP with parallel sort from the Standard Template Library
-EXE_OMP_STL:=${EXE}_thrust_omp_stl
-
 # Sequential version
 EXE_SEQ:=${EXE}_thrust_seq
 
 # CUDA-based version
 EXE_CUDA:=${EXE}_thrust_cuda
 
-EXES:=$(EXE_OMP) $(EXE_SEQ) $(EXE_CUDA) # $(EXE_OMP_STL)
+EXES:=$(EXE_OMP) $(EXE_SEQ) $(EXE_CUDA)
 
 ALL: read_bam $(EXES)
+
+serial: $(EXE_SEQ)
+
+omp: $(EXE_OMP)
+
+cuda: $(EXE_CUDA)
 
 tests: ${EXES}
 	./test_wct.sh
@@ -87,9 +90,6 @@ read_bam: read_bam.cpp
 $(EXE_OMP): main.o interval.o thrust_count_omp.o utils.o
 	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
-$(EXE_OMP_STL): main.o interval.o thrust_count_omp_stl.o utils.o
-	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
-
 $(EXE_SEQ): main.o interval.o thrust_count_seq.o utils.o
 	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
@@ -100,10 +100,6 @@ $(EXE_CUDA): main.o interval.o thrust_count_cuda.o utils.o
 
 thrust_count_omp.o: CPPFLAGS+=-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_OMP -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP # -D_GLIBCXX_PARALLEL
 thrust_count_omp.o: thrust_count.cc thrust_count.hh utils.hh
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
-
-thrust_count_omp_stl.o: CPPFLAGS+=-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CPP -DUSE_STL_SORT # -D_GLIBCXX_PARALLEL
-thrust_count_omp_stl.o: thrust_count.cc thrust_count.hh utilshh
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 thrust_count_seq.o: CPPFLAGS+=-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CPP

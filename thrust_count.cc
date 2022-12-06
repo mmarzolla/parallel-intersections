@@ -22,11 +22,7 @@
 #include <string>
 #include <vector>
 #include <cassert>
-#if (USE_STL_SORT && !__CUDACC__)
-#include <parallel/algorithm>
-#else
 #include <thrust/sort.h>
-#endif
 #include <thrust/reduce.h>
 #include <thrust/transform_scan.h>
 #include <thrust/transform_reduce.h>
@@ -203,12 +199,7 @@ size_t thrust_count(const std::vector<interval> &upd,
                   th::make_zip_iterator(d_endpoints.begin() + 2*n, d_endpoints.begin() + 2*n + m),
                   make_endpoint(endpoint::UPDATE));
 
-#if (USE_STL_SORT && !__CUDACC__)
-#error std::sort is not compatible with th:device_vector
-    // __gnu_parallel::sort(d_endpoints.begin(), d_endpoints.end());
-#else
     th::sort(d_endpoints.begin(), d_endpoints.end());
-#endif
 
     /* left_idx[i] is the position (index) in the sorted endpoint
        array of the left endpoint of subscription interval with id==i;
