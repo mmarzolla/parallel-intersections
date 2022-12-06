@@ -94,6 +94,7 @@ $(EXE_SEQ): main.o interval.o thrust_count_seq.o utils.o
 	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
 $(EXE_CUDA): LDLIBS+=-lcudart
+$(EXE_CUDA): LDFLAGS+=-L/usr/local/cuda/lib64
 $(EXE_CUDA): main.o interval.o thrust_count_cuda.o utils.o
 	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
