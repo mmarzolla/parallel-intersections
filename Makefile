@@ -26,7 +26,7 @@ CXXFLAGS+=-Wall -std=c++14 -pedantic -O2 -fopenmp -I${THRUST_INCLUDE_PATH} -I${T
 CPPFLAGS+=
 LDFLAGS+=-fopenmp
 LDLIBS+=-lm -lrt -lhts
-NVCC:=nvcc
+NVCC?=nvcc
 NVCFLAGS+=-x cu -O2 -I${THRUST_INCLUDE_PATH} -I${THRUST_INCLUDE_PATH}/dependencies/libcudacxx/include -I${THRUST_INCLUDE_PATH}/dependencies/cub
 
 # name of the executable
@@ -43,6 +43,7 @@ EXE_CUDA:=${EXE}_thrust_cuda
 
 EXES:=$(EXE_OMP) $(EXE_SEQ) $(EXE_CUDA)
 
+# Use the C++ compiler instead of C to link object files
 LINK.o = $(LINK.cc)
 
 ALL: read_bam $(EXES)
