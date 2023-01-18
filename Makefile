@@ -43,6 +43,8 @@ EXE_CUDA:=${EXE}_thrust_cuda
 
 EXES:=$(EXE_OMP) $(EXE_SEQ) $(EXE_CUDA)
 
+LINK.o = $(LINK.cc)
+
 ALL: read_bam $(EXES)
 
 serial: $(EXE_SEQ)

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * thrust_count.cu - count intersections using the Thrust library
+ * thrust_count.cc - count intersections using the Thrust library
  *
  * Copyright (C) 2022 Moreno Marzolla
  *
@@ -39,9 +39,9 @@ namespace th = thrust;
  * This unary function takes an interval as input, and produces a
  * pair of endpoints <lower, upper>
  */
-typedef typename th::tuple<endpoint, endpoint> Pair_of_endpoints;
+typedef typename th::tuple<endpoint, endpoint> pair_of_endpoints;
 
-struct make_endpoint : public th::unary_function< const interval &, Pair_of_endpoints > /* lower, upper */
+struct make_endpoint : public th::unary_function< const interval &, pair_of_endpoints > /* lower, upper */
 {
     endpoint::ep_type ep_type;
 
@@ -49,7 +49,7 @@ struct make_endpoint : public th::unary_function< const interval &, Pair_of_endp
     make_endpoint(endpoint::ep_type ep) : ep_type(ep) { }
 
     GLOBAL
-    Pair_of_endpoints operator()(const interval &i) const
+    pair_of_endpoints operator()(const interval &i) const
     {
         return th::make_tuple( endpoint(i.id, i.lower, endpoint::LOWER, ep_type),
                                endpoint(i.id, i.upper, endpoint::UPPER, ep_type) );
