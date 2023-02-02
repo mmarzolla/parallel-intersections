@@ -8,13 +8,18 @@ intersection-counting algorithm described in the paper:
 
 ## Requirements
 
-The program has been compiled under Ubuntu Linux 18.04/20.04 with the
-following dependencies:
+The program has been compiled under Ubuntu Linux 18.04/20.04/22.04
+with the following dependencies:
 
 - The [Thrust parallel algorithm library](https://thrust.github.io/).
   We used the most recent version from the Git repository
 
-- [NVidia CUDA Toolkit](https://developer.nvidia.com/cuda-downloads)
+- [NVidia CUDA Toolkit](https://developer.nvidia.com/cuda-downloads);
+  you should install the version from NVidia web site rather than the
+  version included in Ubuntu's software repository, since the latter
+  might be incompatible with Thrust.
+
+- `libhts` (install with `sudo apt install libhts-dev`)
 
 - GNU Make
 
@@ -22,9 +27,10 @@ following dependencies:
 
 ### Step 1
 
-Clone the Thrust library into a local directory; the Makefile assumes
-that Thrust is installed in `~/src/thrust`, but you can change this
-by modifying the value of `THRUST_INCLUDE_PATH` in the Makefile.
+Clone the [Thrust library](https://thrust.github.io/) into a local
+directory; the Makefile assumes that Thrust is installed in
+`~/src/thrust`, but you can change this by modifying the value of
+`THRUST_INCLUDE_PATH` in the Makefile.
 
     mkdir -p ~/src
     cd ~/src
