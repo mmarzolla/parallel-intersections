@@ -8,8 +8,8 @@ intersection-counting algorithm described in the paper:
 
 ## Requirements
 
-The program has been compiled under Ubuntu Linux 18.04/20.04/22.04
-with the following dependencies:
+The program has been compiled under Ubuntu Linux 18.04/20.04 with the
+following dependencies:
 
 - The [Thrust parallel algorithm library](https://thrust.github.io/).
   We used the most recent version from the Git repository
@@ -22,6 +22,23 @@ with the following dependencies:
 - `libhts` (install with `sudo apt install libhts-dev`)
 
 - GNU Make
+
+There seems to be [issues](https://github.com/NVIDIA/nccl/issues/102§)
+with the NVidia C compiler on Ubuntu 22.04: the serial and OpenMP
+version of the parallel intersection algorithm compile and run fine,
+but the CUDA version does not compile due to the following error:
+
+```
+/usr/include/c++/11/bits/std_function.h:435:145: error: parameter packs not expanded with ‘...’:
+  435 |         function(_Functor&& __f)
+      |                                                                                                                                                 ^
+/usr/include/c++/11/bits/std_function.h:435:145: note:         ‘_ArgTypes’
+/usr/include/c++/11/bits/std_function.h:530:146: error: parameter packs not expanded with ‘...’:
+  530 |         operator=(_Functor&& __f)
+      |                                                                                                                                                  ^
+/usr/include/c++/11/bits/std_function.h:530:146: note:         ‘_ArgTypes’
+make: *** [Makefile:112: thrust_count_cuda.o] Error 1
+```
 
 ## Installation
 
@@ -38,13 +55,18 @@ directory; the Makefile assumes that Thrust is installed in
 
 (you don't need to compile anything; Thrust is a headers-only library).
 
-### Step 2
+### Step 2 (optional)
 
-Fetch the input data into `~/src/intersections-data/` and unpack it
+If you want to replicate the tests described in the paper, you need to
+fetch the input data into `~/src/intersections-data/` and unpack it
 using the following commands:
 
     wget https://si-clusterraspberry.csr.unibo.it/downloads/intersections-data.tar.gz
     tar xvfz intersections-data.tar.gz
+
+**WARNING** the archive is very big (more than 16G), and becomes even
+bigger once decompressed (about 64G). Please ensure that you have
+enough disk space.
 
 ### Step 3
 
@@ -68,7 +90,7 @@ Do a quick test to see if everything works:
 ### Step 5 (optional)
 
 Test the sequential, OpenMP and CUDA intersection-counting algorithms
-with the `Chr21` and `Exome` datasets:
+with the `Chr21` and `Exome` datasets from step 2 above:
 
     make check.med
     make check.big
