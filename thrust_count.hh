@@ -2,7 +2,7 @@
  *
  * thrust_count.hh
  *
- * Copyright (C) 2021, 2022, 2023 Moreno Marzolla, Gabriele D'Angelo
+ * Copyright (C) 2022, 2023 Moreno Marzolla, Giovanni Birolo, Gabriele D'Angelo, Piero Fariselli
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

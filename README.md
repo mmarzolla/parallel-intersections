@@ -3,7 +3,7 @@
 This repository contains a parallel implementation of the
 intersection-counting algorithm described in the paper:
 
-> G. D'angelo, G. Birolo, P. Fariselli, M. Marzolla, "Parallel
+> M. Marzolla, G. Birolo, G. D'Angelo, P. Fariselli, "Parallel
 > Intersection Counting on Shared-Memory Multiprocessors and GPUs"
 
 ## Requirements
@@ -29,5 +29,10 @@ The enclosed Makefile builds three executables:
 
 Simply issue the command:
 
-    make
+    make all
+
+to build all executables; type `make` to see the full list of targets
+supported by the Makefile.
+
+
 

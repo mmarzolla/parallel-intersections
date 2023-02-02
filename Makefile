@@ -12,10 +12,6 @@ CUDA_LIB_PATH := /usr/local/cuda/lib64
 # test the program)
 DATA_PATH := ${HOME}/intersections-data
 
-BITS_COUNT_PER_INTERVAL := ${HOME}/src/bits/bin/bits_count_per_interval_cuda
-
-BITS_COUNT := ${HOME}/src/bits/bin/bits_count_cuda
-
 ##############################################################################
 ##
 ## End Configuration (you should not need to modify anything below)
@@ -46,7 +42,23 @@ EXES:=$(EXE_OMP) $(EXE_SEQ) $(EXE_CUDA)
 # Use the C++ compiler instead of C to link object files
 LINK.o = $(LINK.cc)
 
-ALL: read_bam $(EXES)
+help:
+	@echo
+	@echo "Available targets:"
+	@echo
+	@echo "all        build all executables"
+	@echo "serial     build the sequential program only"
+	@echo "omp        build the OpenMP program only"
+	@echo "cuda       build the CUDA program only"
+	@echo "clean      remove temporary build files"
+	@echo "distclean  remove temporary files"
+	@echo "check      quick test"
+	@echo "tests      run comprehensive performance tests (requires full dataset)"
+	@echo "test.med   test with the \"medium\" dataset"
+	@echo "test.big   test with the \"big\" dataset"
+	@echo
+
+all: read_bam $(EXES)
 
 serial: $(EXE_SEQ)
 
@@ -72,20 +84,6 @@ test.big: $(EXES)
 	for ALGO in $(EXES); do \
 		./$${ALGO} -r 5 -m ${DATA_PATH}/HG00258.mapped.ILLUMINA.bwa.GBR.exome.20120522.bam -d ${DATA_PATH}/hsa37-cds-split.bed ; \
 	done
-
-test.bits: $(EXE_CUDA) $(BITS_COUNT_PER_INTERVAL) $(BITS_COUNT)
-	@echo "**"
-	@echo "** ${EXE_CUDA}"
-	@echo "**"
-	./$(EXE_CUDA) -m ${DATA_PATH}/HG00258.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam -d ${DATA_PATH}/hsa37-cds-split.bed
-	@echo "**"
-	@echo "** ${BITS_COUNT_PER_INTERVAL}"
-	@echo "**"
-	$(BITS_COUNT_PER_INTERVAL) -a ${DATA_PATH}/HG00258.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bed -b ${DATA_PATH}/hsa37-cds-split.bed -g ${DATA_PATH}/hsa37.genome
-	@echo "**"
-	@echo "** ${BITS_COUNT}"
-	@echo "**"
-	$(BITS_COUNT) -a ${DATA_PATH}/HG00258.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bed -b ${DATA_PATH}/hsa37-cds-split.bed -g ${DATA_PATH}/hsa37.genome
 
 read_bam: read_bam.cpp
 	$(CXX) -o read_bam read_bam.cpp -lhts

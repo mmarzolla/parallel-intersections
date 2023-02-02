@@ -2,7 +2,7 @@
  *
  * seq_bf_count.hh - brute-force intersection count
  *
- * Copyright (C) 2022, 2023 Moreno Marzolla
+ * Copyright (C) 2022, 2023 Moreno Marzolla, Giovanni Birolo, Gabriele D'Angelo, Piero Fariselli
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

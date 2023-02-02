@@ -2,7 +2,7 @@
  *
  * thrust_count.cc - count intersections using the Thrust library
  *
- * Copyright (C) 2022 Moreno Marzolla
+ * Copyright (C) 2022, 2023 Moreno Marzolla, Giovanni Birolo, Gabriele D'Angelo, Piero Fariselli
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -163,7 +163,7 @@ struct init_idx
 
 /**
  * Count how many intervals in `upd` overlap each interval in `sub`.
- * The result is stored in the local array `counts`.
+ * The result is stored in the array `counts`.
  *
  * This function should work correctly regardless whether intervals in
  * `upd` (or `sub`) self-intersect.
@@ -175,6 +175,7 @@ size_t thrust_count(const std::vector<interval> &upd,
     const size_t n = sub.size();
     const size_t m = upd.size();
     const size_t n_endpoints = 2*(n+m);
+    counts.resize(n);
 #if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_OMP
     std::cout << "thrust_count (OpenMP)... " << std::flush;
 #elif THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CPP
