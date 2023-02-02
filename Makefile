@@ -10,7 +10,7 @@ CUDA_LIB_PATH := /usr/local/cuda/lib64
 
 # where are the (big) .bam and .bed data stored (only if you need to
 # test the program)
-DATA_PATH := ${HOME}/intersections-data
+DATA_PATH := ${HOME}/src/intersections-data
 
 ##############################################################################
 ##
