@@ -32,13 +32,11 @@ by modifying the value of `THRUST_INCLUDE_PATH` in the Makefile.
 
 Fetch the input data into `~/src/intersections-data/` and unpack it:
 
-    cd ~/src
     wget https://si-clusterraspberry.csr.unibo.it/downloads/intersections-data.tar.gz
     tar xvfz intersections-data.tar.gz
 
 Clone this repository and build all executable:
 
-    cd ~/src
     git clone https://github.com/mmarzolla/parallel-intersections
     cd parallel-intersections
     make all
