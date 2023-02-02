@@ -2,7 +2,7 @@
  *
  * thrust_count.hh
  *
- * Copyright (C) 2021, 2022 Moreno Marzolla, Gabriele D'Angelo
+ * Copyright (C) 2021, 2022, 2023 Moreno Marzolla, Gabriele D'Angelo
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #include "interval.hh"
 
 size_t thrust_count( const std::vector<interval> &upd,
-                     const std::vector<interval> &sub );
+                     const std::vector<interval> &sub,
+                     std::vector<int> &counts );
 
 #endif /* THRUST_COUNT_HH */

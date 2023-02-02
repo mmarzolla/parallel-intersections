@@ -2,7 +2,7 @@
  *
  * main.cc - count intersections
  *
- * Copyright (C) 2022 Moreno Marzolla
+ * Copyright (C) 2022, 2023 Moreno Marzolla
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,9 +162,11 @@ void test_with_bam_and_bed( const char* bam_file_name, const char *bed_file_name
                     windows.push_back(i);
 #endif
                 }
+                vector<int> counts;
                 const double tstart = now();
-                thrust_count(alignments.at(tid), windows);
+                const int n_intersections = thrust_count(alignments.at(tid), windows, counts);
                 const double elapsed = now() - tstart;
+                cout << n_intersections << " intersections" << endl;
                 intersection_time += elapsed;
             }
         }
@@ -183,6 +185,7 @@ void test_with_random_input(int N, int nreps)
 
     for (int r=0; r<nreps; r++) {
         vector<interval> A, B;
+        vector<int> counts;
         cout << "**" << endl
              << "** Replication " << r << " of " << nreps << endl
              << "**" << endl;
@@ -190,7 +193,7 @@ void test_with_random_input(int N, int nreps)
         init(A, N/2);
         init(B, N/2);
         const double tstart = now();
-        thrust_count(A, B);
+        thrust_count(A, B, counts);
         const double elapsed = now() - tstart;
         intersection_time += elapsed;
     }

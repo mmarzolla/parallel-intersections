@@ -162,15 +162,15 @@ struct init_idx
 
 
 /**
- * Count how many intervals in `upd` overlap each interval in `sub`.  The
- * result is stored in the array `counts`, but is not currently
- * returned to the caller.
+ * Count how many intervals in `upd` overlap each interval in `sub`.
+ * The result is stored in the local array `counts`.
  *
  * This function should work correctly regardless whether intervals in
  * `upd` (or `sub`) self-intersect.
  */
 size_t thrust_count(const std::vector<interval> &upd,
-                    const std::vector<interval> &sub)
+                    const std::vector<interval> &sub,
+                    std::vector<int> &counts )
 {
     const size_t n = sub.size();
     const size_t m = upd.size();
@@ -235,18 +235,9 @@ size_t thrust_count(const std::vector<interval> &upd,
                    d_counts.begin(),
                    compute_counts<th::device_vector<int>::const_iterator>(left_idx.begin(), right_idx.begin(), open_count.begin(), closed_count.begin() ) );
 
-    // The result is stored here. `counts[i]` is the number of
-    // intervals in `upd` that overlap with `upd[i]`
-    th::host_vector<int> counts(d_counts);
+    /* copy the result from device memory to the `counts` array */
+    th::copy(d_counts.begin(), d_counts.end(), counts.begin());
 
-#if 1
-    // Compute total number of intersections. This is not useful if
-    // we are only interested in per-interval intersection counts, so
-    // it is commented out.
     const int n_intersections = th::reduce(d_counts.begin(), d_counts.end(), 0);
-    std::cout << n_intersections << " intersections" << std::endl;
     return n_intersections;
-#else
-    return 0;
-#endif
 }

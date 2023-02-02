@@ -1,10 +1,8 @@
 /****************************************************************************
  *
- * file
+ * omp_bf_count.hh - brute-force intersection count with OpenMP
  *
- * description
- *
- * Copyright (C) <YEAR> Moreno Marzolla
+ * Copyright (C) 2022, 2023 Moreno Marzolla
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +26,7 @@
 #include "interval.hh"
 
 size_t omp_bf_count( const std::vector<interval> &upd,
-                     const std::vector<interval> &sub );
+                     const std::vector<interval> &sub,
+                     std::vector<int> &counts );
 
 #endif /* OMP_BF_COUNT_HH */

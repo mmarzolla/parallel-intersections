@@ -1,8 +1,8 @@
 /****************************************************************************
  *
- * seq_bf_count.cc - sequential brute-force counting
+ * seq_bf_count.cc - brute-force intersection count
  *
- * Copyright (C) 2022 Moreno Marzolla
+ * Copyright (C) 2022, 2023 Moreno Marzolla
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +24,14 @@
 #include "interval.hh"
 #include "seq_bf_count.hh"
 
-/* Return true iff there are two overlapping intervals in v */
+/* Return the total number of overlaps */
 size_t seq_bf_count( const std::vector<interval> &upd,
-                     const std::vector<interval> &sub )
+                     const std::vector<interval> &sub,
+                     std::vector<int> &counts )
 {
     const int n = sub.size();
     const int m = upd.size();
-    std::vector<int> counts(n); // FIXME: array of size_t
+    counts.resize(n);
 
     std::cout << "seq_bf_count: " << std::flush;
 
@@ -40,7 +41,6 @@ size_t seq_bf_count( const std::vector<interval> &upd,
         }
     }
 
-    const int n_intersections = std::accumulate(counts.begin(), counts.end(), 0);
-    std::cout << n_intersections << " intersections" << std::endl;
+    const int n_intersections = std::accumulate(counts.begin(), counts.end(), 0)
     return n_intersections;
 }
