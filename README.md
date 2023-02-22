@@ -24,9 +24,9 @@ following dependencies:
 - GNU Make
 
 There seems to be [issues](https://github.com/NVIDIA/nccl/issues/102§)
-with the NVidia C compiler on Ubuntu 22.04: the serial and OpenMP
-version of the parallel intersection algorithm compile and run fine,
-but the CUDA version does not compile due to the following error:
+with the NVidia C compiler bundled with Ubuntu 22.04: the serial and
+OpenMP versions compile and run fine, but the CUDA version does not
+compile due to the following error:
 
 ```
 /usr/include/c++/11/bits/std_function.h:435:145: error: parameter packs not expanded with ‘...’:
@@ -39,6 +39,9 @@ but the CUDA version does not compile due to the following error:
 /usr/include/c++/11/bits/std_function.h:530:146: note:         ‘_ArgTypes’
 make: *** [Makefile:112: thrust_count_cuda.o] Error 1
 ```
+
+To solve this problem you need to install the NVidia CUDA Toolkit from
+[NVidia web site](https://developer.nvidia.com/cuda-downloads).
 
 ## Installation
 
