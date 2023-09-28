@@ -23,26 +23,6 @@ following dependencies:
 
 - GNU Make
 
-There seems to be [issues](https://github.com/NVIDIA/nccl/issues/102§)
-with the NVidia C compiler bundled with Ubuntu 22.04: the serial and
-OpenMP versions compile and run fine, but the CUDA version does not
-compile due to the following error:
-
-```
-/usr/include/c++/11/bits/std_function.h:435:145: error: parameter packs not expanded with ‘...’:
-  435 |         function(_Functor&& __f)
-      |                                                                                                                                                 ^
-/usr/include/c++/11/bits/std_function.h:435:145: note:         ‘_ArgTypes’
-/usr/include/c++/11/bits/std_function.h:530:146: error: parameter packs not expanded with ‘...’:
-  530 |         operator=(_Functor&& __f)
-      |                                                                                                                                                  ^
-/usr/include/c++/11/bits/std_function.h:530:146: note:         ‘_ArgTypes’
-make: *** [Makefile:112: thrust_count_cuda.o] Error 1
-```
-
-To solve this problem you need to install the NVidia CUDA Toolkit from
-[NVidia web site](https://developer.nvidia.com/cuda-downloads).
-
 ## Installation
 
 ### Step 1
@@ -97,3 +77,37 @@ with the `Chr21` and `Exome` datasets from step 2 above:
 
     make check.med
     make check.big
+
+## Known issues
+
+There seems to be [issues](https://github.com/NVIDIA/nccl/issues/102§)
+with the NVidia C compiler bundled with Ubuntu 22.04: the serial and
+OpenMP versions compile and run fine, but the CUDA version does not
+compile due to the following error:
+
+```
+/usr/include/c++/11/bits/std_function.h:435:145: error: parameter packs not expanded with ‘...’:
+  435 |         function(_Functor&& __f)
+      |                                                                                                                                                 ^
+/usr/include/c++/11/bits/std_function.h:435:145: note:         ‘_ArgTypes’
+/usr/include/c++/11/bits/std_function.h:530:146: error: parameter packs not expanded with ‘...’:
+  530 |         operator=(_Functor&& __f)
+      |                                                                                                                                                  ^
+/usr/include/c++/11/bits/std_function.h:530:146: note:         ‘_ArgTypes’
+make: *** [Makefile:112: thrust_count_cuda.o] Error 1
+```
+
+To solve this problem you need to install the NVidia CUDA Toolkit from
+[NVidia web site](https://developer.nvidia.com/cuda-downloads).
+
+If you encounter this error message:
+
+```
+/home/marzolla/src/thrust/thrust/system/cuda/config.h:116:2: error: #error The version of CUB in your include path is not compatible with this release of Thrust. CUB is now included in the CUDA Toolkit, so you no longer need to use your own checkout of CUB. Define THRUST_IGNORE_CUB_VERSION_CHECK to ignore this.
+ #error The version of CUB in your include path is not compatible with this release of Thrust. CUB is now included in the CUDA Toolkit, so you no longer need to use your own checkout of CUB. Define THRUST_IGNORE_CUB_VERSION_CHECK to ignore this.
+  ^~~~~
+```
+
+try compiling with the following command at Step 3 above:
+
+    NVCFLAGS=-DTHRUST_IGNORE_CUB_VERSION_CHECK make all

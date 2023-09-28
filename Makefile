@@ -23,7 +23,7 @@ CPPFLAGS+=
 LDFLAGS+=-fopenmp
 LDLIBS+=-lm -lrt -lhts
 NVCC?=nvcc
-NVCFLAGS+=-x cu -O2 -I${THRUST_INCLUDE_PATH} -I${THRUST_INCLUDE_PATH}/dependencies/libcudacxx/include -I${THRUST_INCLUDE_PATH}/dependencies/cub
+NVCFLAGS+=-x cu -O2 -I${THRUST_INCLUDE_PATH}
 
 # name of the executable
 EXE:=intersections
