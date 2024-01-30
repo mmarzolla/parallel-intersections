@@ -1,6 +1,6 @@
 # Parallel Intersection-Counting algorithm
 
-This repository contains a parallel implementation of the
+This repository contains the implementation of the parallel
 intersection-counting algorithm described in the paper:
 
 > M. Marzolla, G. Birolo, G. D'Angelo, P. Fariselli, "Parallel
@@ -8,8 +8,8 @@ intersection-counting algorithm described in the paper:
 
 ## Requirements
 
-The program has been compiled under Ubuntu Linux 18.04/20.04 with the
-following dependencies:
+The program has been compiled under Ubuntu Linux 18.04/20.04/22.04
+with the following dependencies:
 
 - The [Thrust parallel algorithm library](https://thrust.github.io/).
   We used the most recent version from the Git repository
@@ -28,40 +28,40 @@ following dependencies:
 ### Step 1
 
 Clone the [Thrust library](https://thrust.github.io/) into a local
-directory; the Makefile assumes that Thrust is installed in
-`~/src/thrust`, but you can change this by modifying the value of
-`THRUST_INCLUDE_PATH` in the Makefile.
+directory:
 
     mkdir -p ~/src
     cd ~/src
     git clone --recursive https://github.com/NVIDIA/thrust.git
 
-(you don't need to compile anything; Thrust is a headers-only library).
+The Makefile assumes that Thrust is installed in `~/src/thrust`, but
+you can change this by modifying the value of `THRUST_INCLUDE_PATH` in
+the Makefile. You don't need to compile anything: Thrust is a
+headers-only library.
 
 ### Step 2 (optional)
 
-If you want to replicate the tests described in the paper, you need to
-fetch the input data into `~/src/intersections-data/` and unpack it
-using the following commands:
+To replicate the tests described in the paper, you need to fetch the
+input data into `~/src/intersections-data/` and unpack it using the
+following commands:
 
     wget https://si-clusterraspberry.csr.unibo.it/downloads/intersections-data.tar.gz
     tar xvfz intersections-data.tar.gz
 
-**WARNING** the archive is very big (more than 16G), and becomes even
-bigger once decompressed (about 64G). Please ensure that you have
+**WARNING** the archive is very big (more than 16GB), and becomes even
+bigger (about 64GB) once decompressed. Please make sure that you have
 enough disk space.
 
 ### Step 3
 
-Clone this repository and build all executable:
+Clone this repository and build all executables:
 
     git clone https://github.com/mmarzolla/parallel-intersections
     cd parallel-intersections
     make all
 
-The provided Makefile builds three executables:
-`intersections_thrust_seq` (serial version),
-`intersections_thrust_omp` (OpenMP version for CPU),
+Tree programs should be built: `intersections_thrust_seq` (serial
+version), `intersections_thrust_omp` (OpenMP version for CPU),
 `intersections_thrust_cuda` (CUDA version for the GPU).
 
 ### Step 4
@@ -82,8 +82,9 @@ with the `Chr21` and `Exome` datasets from step 2 above:
 
 There seems to be [issues](https://github.com/NVIDIA/nccl/issues/102§)
 with the NVidia C compiler bundled with Ubuntu 22.04: the serial and
-OpenMP versions compile and run fine, but the CUDA version does not
-compile due to the following error:
+OpenMP versions of the parallel intersection-counting program compile
+and run fine, but the CUDA version does not compile due to the
+following error:
 
 ```
 /usr/include/c++/11/bits/std_function.h:435:145: error: parameter packs not expanded with ‘...’:
@@ -98,7 +99,8 @@ make: *** [Makefile:112: thrust_count_cuda.o] Error 1
 ```
 
 To solve this problem you need to install the NVidia CUDA Toolkit from
-[NVidia web site](https://developer.nvidia.com/cuda-downloads).
+[NVidia web site](https://developer.nvidia.com/cuda-downloads), rather
+than the version provided with Ubuntu.
 
 If you encounter this error message:
 
