@@ -9,10 +9,10 @@
 #
 # ./test_wct.sh
 #
-# Last modified 2022-12-06 by Moreno Marzolla
+# Last modified 2024-02-01 by Moreno Marzolla
 
 # number of replications
-NREPS=5
+NREPS=10
 # initial n. of intervals
 FROM_SIZE=1000000
 # final n. of intervals
@@ -40,7 +40,7 @@ for ALGO in seq omp cuda; do
     echo "# n_intervals time_sec" >> ${FNAME}
     for SIZE in `seq $FROM_SIZE $STEP_SIZE $TO_SIZE`; do
         echo -n "$ALGO ${SIZE}/${TO_SIZE} "
-        TIME=$(${EXE} -r ${NREPS} -N ${SIZE} | grep -i "Intersection time" | egrep -o "[[:digit:]\.]+")
+        TIME=$(${EXE} -r ${NREPS} -N ${SIZE} | grep -i "Intersection time" | egrep -o "[[:digit:]]+\.[[:digit:]]+")
         echo "$SIZE $TIME" >> ${FNAME}
         echo "$TIME"
     done

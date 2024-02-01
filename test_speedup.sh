@@ -5,11 +5,11 @@
 #
 # ./test_speedup.sh
 #
-# Last modified 2022-12-06 by Moreno Marzolla
+# Last modified 2024-02-01 by Moreno Marzolla
 #
 
 # number of replications
-NREPS=5
+NREPS=10
 # n. of intervals
 SIZE=50000000
 # where to place test results
@@ -35,7 +35,7 @@ for ALGO in omp; do
     NPROC=`cat /proc/cpuinfo | grep processor | wc -l`
     for P in `seq 1 $NPROC` ; do
         echo -n "$ALGO $P/$NPROC "
-        TIME=$(OMP_NUM_THREADS=$P ${EXE} -r ${NREPS} -N ${SIZE} | grep -i "Intersection time" | egrep -o "[[:digit:]\.]+")
+        TIME=$(OMP_NUM_THREADS=$P ${EXE} -r ${NREPS} -N ${SIZE} | grep -i "Intersection time" | egrep -o "[[:digit:]]+\.[[:digit:]]+")
         echo "$P $TIME" >> ${FNAME}
         echo "$TIME"
     done
