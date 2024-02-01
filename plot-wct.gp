@@ -2,14 +2,14 @@
 ##
 ## Run with:
 ##
-## gnuplot plot_wct.gp
+## gnuplot plot-wct.gp
 ##
 ## The plot goes to wct.eps
 ##
-## Last updated 2022-12-06 Moreno Marzolla
+## Last updated 2024-02-01 Moreno Marzolla
 
 set term postscript eps color linewidth 1.2
-set size .8
+set size .7
 set output "wct.eps"
 set logscale y
 set key bottom right maxrows 3

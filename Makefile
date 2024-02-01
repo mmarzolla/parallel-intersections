@@ -8,8 +8,8 @@ THRUST_INCLUDE_PATH := ${HOME}/src/thrust
 
 CUDA_LIB_PATH := /usr/local/cuda/lib64
 
-# where are the (big) .bam and .bed data stored (only if you need to
-# test the program)
+# location where the (big) .bam and .bed files are stored (only if you
+# need to test the program using the same data files from the paper)
 DATA_PATH := ${HOME}/src/intersections-data
 
 ##############################################################################
@@ -111,9 +111,9 @@ thrust_count_cuda.o: NVCFLAGS+=-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP -DTHR
 thrust_count_cuda.o: thrust_count.cc thrust_count.hh utils.hh
 	$(NVCC) $(NVCFLAGS) -c $< -o $@
 
-figures: plot_speedup.gp plot_wct.gp
-	gnuplot plot_speedup.gp
-	gnuplot plot_wct.gp
+figures: plot-speedup.gp plot-wct.gp
+	gnuplot plot-speedup.gp
+	gnuplot plot-wct.gp
 
 clean:
 	\rm -f read_bam *.o $(EXES)
