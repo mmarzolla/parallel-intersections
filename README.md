@@ -19,6 +19,12 @@ with the following dependencies:
   version included in Ubuntu's software repository, since the latter
   might be incompatible with Thrust.
 
+- The Parallel STL library (part of the GNU C Compiler). GNU STL
+  requires Intel's [OneAPI Threading Building Blocks
+  (oneTBB)](https://github.com/oneapi-src/oneTBB) library, which may
+  or may not be already installed with the GCC compiler. If not,
+  you can install it with `sudo apt install libtbb-dev`
+
 - `libhts` (install with `sudo apt install libhts-dev`)
 
 - GNU Make
@@ -80,7 +86,7 @@ with the `Chr21` and `Exome` datasets from step 2 above:
 
 ## Known issues
 
-There seems to be [issues](https://github.com/NVIDIA/nccl/issues/102§)
+There seems to be [issues](https://github.com/NVIDIA/nccl/issues/102)
 with the NVidia C compiler bundled with Ubuntu 22.04: the serial and
 OpenMP versions of the parallel intersection-counting program compile
 and run fine, but the CUDA version does not compile due to the

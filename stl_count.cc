@@ -65,8 +65,8 @@ struct make_upper_endpoint :
  * This function should work correctly regardless whether intervals in
  * `upd` (or `sub`) self-intersect.
  */
-size_t count_intersections(const std::vector<interval> &upd, // B
-                           const std::vector<interval> &sub, // A
+size_t count_intersections(const std::vector<interval> &sub, // A
+                           const std::vector<interval> &upd, // B
                            std::vector<int> &counts )
 {
     const size_t n = sub.size();

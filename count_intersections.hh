@@ -29,8 +29,8 @@
  * Count how many intervals in `upd` overlap each interval in `sub`.
  * The result is stored in the array `counts`.
  */
-size_t count_intersections( const std::vector<interval> &upd,
-                            const std::vector<interval> &sub,
+size_t count_intersections( const std::vector<interval> &sub,
+                            const std::vector<interval> &upd,
                             std::vector<int> &counts );
 
 #endif /* COUNT_INTERSECTIONS_HH */

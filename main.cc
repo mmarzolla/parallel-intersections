@@ -164,7 +164,7 @@ void test_with_bam_and_bed( const char* bam_file_name, const char *bed_file_name
                 }
                 vector<int> counts;
                 const double tstart = now();
-                const int n_intersections = count_intersections(alignments.at(tid), windows, counts);
+                const int n_intersections = count_intersections(windows, alignments.at(tid), counts);
                 const double elapsed = now() - tstart;
                 cout << n_intersections << " intersections" << endl;
                 intersection_time += elapsed;
@@ -193,7 +193,7 @@ void test_with_random_input(int N, int nreps)
         init(A, N/2);
         init(B, N/2);
         const double tstart = now();
-        count_intersections(B, A, counts);
+        count_intersections(A, B, counts);
         const double elapsed = now() - tstart;
         intersection_time += elapsed;
     }
