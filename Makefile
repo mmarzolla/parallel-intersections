@@ -37,7 +37,10 @@ EXE_SEQ:=${EXE}_thrust_seq
 # CUDA-based version
 EXE_CUDA:=${EXE}_thrust_cuda
 
-EXES:=$(EXE_OMP) $(EXE_SEQ) $(EXE_CUDA)
+# STL-based version
+EXE_STL:=${EXE}_stl_omp
+
+EXES:=$(EXE_SEQ) $(EXE_OMP) $(EXE_STL) $(EXE_CUDA)
 
 # Use the C++ compiler instead of C to link object files
 LINK.o = $(LINK.cc)
@@ -49,6 +52,7 @@ help:
 	@echo "all        build all executables"
 	@echo "serial     build the sequential program only"
 	@echo "omp        build the OpenMP program only"
+	@echo "stl        build the STL program only"
 	@echo "cuda       build the CUDA program only"
 	@echo "clean      remove temporary build files"
 	@echo "distclean  remove temporary files"
@@ -66,14 +70,16 @@ omp: $(EXE_OMP)
 
 cuda: $(EXE_CUDA)
 
+stl: $(EXE_STL)
+
 tests: ${EXES}
 	./test_wct.sh
 	./test_speedup.sh
 
 check: read_bam $(EXES)
-	./$(EXE_SEQ) -m panel_01.bam -d target.bed
-	./$(EXE_OMP) -m panel_01.bam -d target.bed
-	./$(EXE_CUDA) -m panel_01.bam -d target.bed
+	for ALGO in $(EXES); do \
+		./$${ALGO} -m panel_01.bam -d target.bed ; \
+	done
 
 test.med: $(EXES)
 	for ALGO in $(EXES); do \
@@ -94,22 +100,30 @@ $(EXE_OMP): main.o interval.o thrust_count_omp.o utils.o
 $(EXE_SEQ): main.o interval.o thrust_count_seq.o utils.o
 	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
+$(EXE_STL): LDLIBS+=-ltbb
+$(EXE_STL): main.o interval.o stl_count_omp.o utils.o
+	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
+
 $(EXE_CUDA): LDLIBS+=-lcudart
 $(EXE_CUDA): LDFLAGS+=-L/usr/local/cuda/lib64
 $(EXE_CUDA): main.o interval.o thrust_count_cuda.o utils.o
 	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
 thrust_count_omp.o: CPPFLAGS+=-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_OMP -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP # -D_GLIBCXX_PARALLEL
-thrust_count_omp.o: thrust_count.cc thrust_count.hh utils.hh
+thrust_count_omp.o: thrust_count.cc count_intersections.hh utils.hh interval.hh endpoint.hh
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 thrust_count_seq.o: CPPFLAGS+=-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CPP
-thrust_count_seq.o: thrust_count.cc thrust_count.hh utils.hh
+thrust_count_seq.o: thrust_count.cc count_intersections.hh utils.hh interval.hh endpoint.hh
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 thrust_count_cuda.o: NVCFLAGS+=-DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA
-thrust_count_cuda.o: thrust_count.cc thrust_count.hh utils.hh
+thrust_count_cuda.o: thrust_count.cc count_intersections.hh utils.hh interval.hh endpoint.hh
 	$(NVCC) $(NVCFLAGS) -c $< -o $@
+
+stl_count_omp.o: CXXFLAGS=-std=c++17 -O2 -Wall -Wpedantic -fopenmp
+stl_count_omp.o: stl_count.cc count_intersections.hh utils.hh interval.hh endpoint.hh
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 figures: plot-speedup.gp plot-wct.gp
 	gnuplot plot-speedup.gp

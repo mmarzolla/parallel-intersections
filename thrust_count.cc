@@ -168,20 +168,20 @@ struct init_idx
  * This function should work correctly regardless whether intervals in
  * `upd` (or `sub`) self-intersect.
  */
-size_t thrust_count(const std::vector<interval> &upd,
-                    const std::vector<interval> &sub,
-                    std::vector<int> &counts )
+size_t count_intersections(const std::vector<interval> &upd,
+                           const std::vector<interval> &sub,
+                           std::vector<int> &counts )
 {
     const size_t n = sub.size();
     const size_t m = upd.size();
     const size_t n_endpoints = 2*(n+m);
     counts.resize(n);
 #if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_OMP
-    std::cout << "thrust_count (OpenMP)... " << std::flush;
+    std::cout << "Thrust/OpenMP... " << std::flush;
 #elif THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CPP
-    std::cout << "thrust_count (serial)... " << std::flush;
+    std::cout << "Thrust/serial... " << std::flush;
 #elif THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_CUDA
-    std::cout << "thrust_count (CUDA)... " << std::flush;
+    std::cout << "Thrust/CUDA... " << std::flush;
 #else
     #error Unknown value for THRUST_DEVICE_SYSTEM
 #endif

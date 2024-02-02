@@ -1,8 +1,8 @@
 /****************************************************************************
  *
- * thrust_count.hh
+ * count_intersections.hh
  *
- * Copyright (C) 2022, 2023 Moreno Marzolla, Giovanni Birolo, Gabriele D'Angelo, Piero Fariselli
+ * Copyright (C) 2022--2024 Moreno Marzolla, Giovanni Birolo, Gabriele D'Angelo, Piero Fariselli
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,14 +19,18 @@
  *
  ****************************************************************************/
 
-#ifndef THRUST_COUNT_HH
-#define THRUST_COUNT_HH
+#ifndef COUNT_INTERSECTIONS_HH
+#define COUNT_INTERSECTIONS_HH
 
 #include <vector>
 #include "interval.hh"
 
-size_t thrust_count( const std::vector<interval> &upd,
-                     const std::vector<interval> &sub,
-                     std::vector<int> &counts );
+/**
+ * Count how many intervals in `upd` overlap each interval in `sub`.
+ * The result is stored in the array `counts`.
+ */
+size_t count_intersections( const std::vector<interval> &upd,
+                            const std::vector<interval> &sub,
+                            std::vector<int> &counts );
 
-#endif /* THRUST_COUNT_HH */
+#endif /* COUNT_INTERSECTIONS_HH */
