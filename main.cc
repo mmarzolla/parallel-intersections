@@ -2,7 +2,7 @@
  *
  * main.cc - count intersections
  *
- * Copyright (C) 2022, 2023 Moreno Marzolla, Giovanni Birolo, Gabriele D'Angelo, Piero Fariselli
+ * Copyright (C) 2022--2024 Moreno Marzolla, Giovanni Birolo, Gabriele D'Angelo, Piero Fariselli
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,7 +126,7 @@ void test_with_bam_and_bed( const char* bam_file_name, const char *bed_file_name
     double intersection_time = 0;
     for (int r = 0; r<nreps; r++) {
         cout << "**" << endl
-             << "** Replication " << r << " of " << nreps << endl
+             << "** Replication " << r+1 << " of " << nreps << endl
              << "**" << endl;
         for (auto contig = chrom_str2tid.begin(); contig != chrom_str2tid.end(); contig++) {
             const int32_t tid = contig->second;
