@@ -29,16 +29,16 @@ NVCFLAGS+=-x cu -O2 -I${THRUST_INCLUDE_PATH}
 EXE:=intersections
 
 # Thrust-based OpenMPversion
-EXE_OMP:=${EXE}_thrust_omp
+EXE_OMP:=${EXE}_omp
 
 # Sequential version
-EXE_SEQ:=${EXE}_thrust_seq
+EXE_SEQ:=${EXE}_seq
 
 # CUDA-based version
-EXE_CUDA:=${EXE}_thrust_cuda
+EXE_CUDA:=${EXE}_cuda
 
 # STL-based version
-EXE_STL:=${EXE}_stl_omp
+EXE_STL:=${EXE}_stl
 
 EXES:=$(EXE_SEQ) $(EXE_OMP) $(EXE_STL) $(EXE_CUDA)
 

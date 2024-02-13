@@ -5,20 +5,20 @@
 #
 # ./test_speedup.sh
 #
-# Last modified 2024-02-01 by Moreno Marzolla
+# Last modified 2024-02-13 by Moreno Marzolla
 #
 
 # number of replications
-NREPS=10
+NREPS=5
 # n. of intervals
-SIZE=50000000
+SIZE=100000000
 # where to place test results
 OUT_DIR=test_results
 
 mkdir -p ${OUT_DIR}
 
-for ALGO in omp; do
-    EXE="./intersections_thrust_${ALGO}"
+for ALGO in omp ; do
+    EXE="./intersections_${ALGO}"
 
     if [ ! -f ${EXE} ]; then
         echo "FATAL: Missing executable \"${EXE}\""
@@ -28,6 +28,7 @@ for ALGO in omp; do
     FNAME="${OUT_DIR}/`hostname`_${ALGO}_speedup.txt"
     echo "# Machine: `hostname`" > ${FNAME}
     echo "# Algorithm: ${ALGO}" >> ${FNAME}
+    echo "# N. of replications: ${NREPS}" >> ${FNAME}
     echo "# Date: `date`" >> ${FNAME}
     echo "# N of intervals: $SIZE" >> ${FNAME}
     echo "# Legend:" >> ${FNAME}

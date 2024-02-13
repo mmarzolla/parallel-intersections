@@ -9,7 +9,7 @@
 #
 # ./test_wct.sh
 #
-# Last modified 2024-02-01 by Moreno Marzolla
+# Last modified 2024-02-13 by Moreno Marzolla
 
 # number of replications
 NREPS=10
@@ -24,8 +24,8 @@ OUT_DIR=test_results
 
 mkdir -p ${OUT_DIR}
 
-for ALGO in seq omp cuda; do
-    EXE="./intersections_thrust_${ALGO}"
+for ALGO in seq omp cuda stl; do
+    EXE="./intersections_${ALGO}"
 
     if [ ! -f ${EXE} ]; then
         echo "FATAL: Missing executable \"${EXE}\""
