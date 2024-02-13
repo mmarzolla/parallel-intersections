@@ -36,9 +36,8 @@
  * upper bound of a subscription or update region.
  ******************************************************************************/
 struct endpoint {
-
-    enum ep_extreme { LOWER, UPPER, UNDEF };
-    enum ep_type { SUBSCRIPTION, UPDATE };
+    enum ep_extreme { LEFT, RIGHT, UNDEF };
+    enum ep_type { SET_A, SET_B };
 
     int id;     // ID of the interval this endpoint belongs to
     int32_t v;  // value of this endpoint
@@ -48,7 +47,7 @@ struct endpoint {
     // Default constructor
     GLOBAL
     endpoint() :
-        id(0), v(0), e(UNDEF), t(SUBSCRIPTION)
+        id(0), v(0), e(UNDEF), t(SET_A)
     { };
 
     // Constructor
@@ -75,7 +74,7 @@ struct endpoint {
     {
         assert( UNDEF != e );
         assert( UNDEF != other.e );
-        return (v < other.v || (v == other.v && e == LOWER && other.e == UPPER));
+        return (v < other.v || (v == other.v && e == LEFT && other.e == RIGHT));
     }
 };
 

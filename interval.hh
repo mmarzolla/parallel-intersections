@@ -4,7 +4,7 @@
  *
  * Count intersections
  *
- * Copyright (C) 2022, 2023 Moreno Marzolla, Giovanni Birolo, Gabriele D'Angelo, Piero Fariselli
+ * Copyright (C) 2022, 2023, 2024 Moreno Marzolla, Giovanni Birolo, Gabriele D'Angelo, Piero Fariselli
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +27,12 @@
 #include <cstdint>
 
 /**
- * This struct represents the closed intnerval [lower, upper]
+ * This struct represents the closed intnerval [left, right]
  */
 struct interval {
     int id;             /* unique identifier (0, ... n_intervals - 1) */
-    int32_t lower;	/* lower bound */
-    int32_t upper;	/* upper bound */
+    int32_t left;	/* lower bound */
+    int32_t right;	/* upper bound */
     void* payload;      /* user-defined payload associated with this interval */
 };
 

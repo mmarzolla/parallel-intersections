@@ -2,7 +2,7 @@
  *
  * interval.cc - operations on intervals
  *
- * Copyright (C) 2022, 2023 Moreno Marzolla, Giovanni Birolo, Gabriele D'Angelo, Piero Fariselli
+ * Copyright (C) 2022, 2023, 2024 Moreno Marzolla, Giovanni Birolo, Gabriele D'Angelo, Piero Fariselli
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,5 @@
  */
 bool intersect( const interval &x, const interval &y )
 {
-    //return ( x.lower < y.upper && y.lower < x.upper );
-    return ( x.lower <= y.upper && y.lower <= x.upper );
+    return ( x.left <= y.right && y.left <= x.right );
 }

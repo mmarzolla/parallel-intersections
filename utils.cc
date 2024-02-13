@@ -1,8 +1,8 @@
 /****************************************************************************
  *
- * utils.cc - Misc utilities
+ * utils.cc - Utilities
  *
- * Copyright (C) 2022, 2023 Moreno Marzolla, Giovanni Birolo, Gabriele D'Angelo, Piero Fariselli
+ * Copyright (C) 2022, 2023, 2024 Moreno Marzolla, Giovanni Birolo, Gabriele D'Angelo, Piero Fariselli
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
 double now( void )
 {
     struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts );
-    return ts.tv_sec + (double)ts.tv_nsec / 1e9;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return ts.tv_sec + (double)ts.tv_nsec / 1.0e9;
 }
 
 int randab(int a, int b)

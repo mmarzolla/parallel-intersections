@@ -2,7 +2,7 @@
  *
  * thrust_count.cc - count intersections using the Thrust library
  *
- * Copyright (C) 2022, 2023 Moreno Marzolla, Giovanni Birolo, Gabriele D'Angelo, Piero Fariselli
+ * Copyright (C) 2022, 2023, 2024 Moreno Marzolla, Giovanni Birolo, Gabriele D'Angelo, Piero Fariselli
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,12 +36,12 @@
 namespace th = thrust;
 
 /**
- * This unary function takes an interval as input, and produces a
- * pair of endpoints <lower, upper>
+ * This unary function takes an interval as input, and produces a pair
+ * of (left, right) endpoints
  */
 typedef typename th::tuple<endpoint, endpoint> pair_of_endpoints;
 
-struct make_endpoint : public th::unary_function< const interval &, pair_of_endpoints > /* lower, upper */
+struct make_endpoint : public th::unary_function< const interval &, pair_of_endpoints >
 {
     endpoint::ep_type ep_type;
 
@@ -51,14 +51,14 @@ struct make_endpoint : public th::unary_function< const interval &, pair_of_endp
     GLOBAL
     pair_of_endpoints operator()(const interval &i) const
     {
-        return th::make_tuple( endpoint(i.id, i.lower, endpoint::LOWER, ep_type),
-                               endpoint(i.id, i.upper, endpoint::UPPER, ep_type) );
+        return th::make_tuple( endpoint(i.id, i.left, endpoint::LEFT, ep_type),
+                               endpoint(i.id, i.right, endpoint::RIGHT, ep_type) );
     }
 };
 
 /* This is a function that maps an endpoint to 1 iff the endpoint is
-   of a given type (subscription or update) and of a given extreme
-   (lower, upper). */
+   of a given type (SET_A or SET_B) and of a given extreme (left,
+   right). */
 struct init_count : public th::unary_function<const endpoint &, int>
 {
     endpoint::ep_type my_ep_type;
@@ -80,44 +80,26 @@ struct init_count : public th::unary_function<const endpoint &, int>
 template<typename Iter>
 struct compute_counts : public th::unary_function<const endpoint &, int > {
 
-    Iter left_begin, right_begin, n_upd_open_begin, n_upd_closed_begin;
+    Iter left_begin, right_begin, nleft_begin, nright_begin;
 
-    /**
-     * The constructor takes the following arguments:
-     *
-     * - An iterator pointing to the beginning of the integer array
-     *   left[i] storing the index of the left endpoint of interval
-     *   with id == i;
-     *
-     * - An iterator pointing to the beginning of the integer array
-     *   right[i] storing the index of the right endpoint of interval
-     *   with id == i;
-     *
-     * - An iterator pointing to the beginning of the integer array
-     *   n_upd_open[i] that will accumulate the number of left
-     *   subscription endpoints up to position i in the sorted
-     *   endpoint array;
-     *
-     * - An iterator pointing to the beginning of the integer array
-     *   n_upd_closed[i] that will accumulate the number of right
-     *   subscription endpoints up to position i in the sorted
-     *   endpoint array;
-     */
     GLOBAL
     compute_counts( Iter li, Iter ri, Iter no, Iter nc ) :
         left_begin(li),
         right_begin(ri),
-        n_upd_open_begin(no),
-        n_upd_closed_begin(nc)
+        nleft_begin(no),
+        nright_begin(nc)
     { };
 
+    /**
+     * Returns nleft[right[i.id]] - nright[left[i.id]]
+     */
     GLOBAL
     int operator()(const interval &i) const
     {
         const int idx = i.id;
         const int ll = *(left_begin + idx);
         const int rr = *(right_begin + idx);
-        return *(n_upd_open_begin + rr) - *(n_upd_closed_begin + ll);
+        return *(nleft_begin + rr) - *(nright_begin + ll);
     }
 };
 
@@ -128,16 +110,12 @@ struct init_idx
     Iter_ep ep_begin;
 
     /**
-     * - left_begin is the iterator that points to the left[] array,
-     *   where left[i] is the position (index) in the sorted array of
-     *   the left endpoint of the subscription interval with id==i.
+     * - left_begin is the iterator that points to the left[] array.
      *
-     * - right_begin is the iterator that points to the left[] array,
-     *   where right[i] is the position (index) in the sorted array of
-     *   the left endpoint of the subscription interval with id==i.
+     * - right_begin is the iterator that points to the right[] array.
      *
      * - ep_begin is the iterator that points to the beginning of the
-     *   sorted endpoint array.
+     *   sorted array of endpoints.
      */
     GLOBAL
     init_idx( Iter_ep e, Iter_idx l, Iter_idx r ):
@@ -150,9 +128,9 @@ struct init_idx
     void operator()(int i) const
     {
         const endpoint& ep = *(ep_begin + i);
-        if (ep.t == endpoint::SUBSCRIPTION) {
+        if (ep.t == endpoint::SET_A) {
             const int idx = ep.id;
-            if (ep.e == endpoint::LOWER)
+            if (ep.e == endpoint::LEFT)
                 *(left_begin + idx) = i;
             else
                 *(right_begin + idx) = i;
@@ -160,20 +138,16 @@ struct init_idx
     }
 };
 
-
 /**
- * Count how many intervals in `upd` overlap each interval in `sub`.
- * The result is stored in the array `counts`.
- *
- * This function should work correctly regardless whether intervals in
- * `upd` (or `sub`) self-intersect.
+ * Count how many intervals in `B` overlap each interval in `A`.  The
+ * result is stored in the array `counts`.
  */
-size_t count_intersections(const std::vector<interval> &sub,
-                           const std::vector<interval> &upd,
+size_t count_intersections(const std::vector<interval> &A,
+                           const std::vector<interval> &B,
                            std::vector<int> &counts )
 {
-    const size_t n = sub.size();
-    const size_t m = upd.size();
+    const size_t n = A.size();
+    const size_t m = A.size();
     const size_t n_endpoints = 2*(n+m);
     counts.resize(n);
 #if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_OMP
@@ -189,54 +163,52 @@ size_t count_intersections(const std::vector<interval> &sub,
     // Array of all endpoints: there are exactly 2*(n+m) pf them
     th::device_vector<endpoint> d_endpoints(n_endpoints);
 
-    th::device_vector<interval> d_sub(sub);
-    th::device_vector<interval> d_upd(upd);
+    th::device_vector<interval> d_A(A);
+    th::device_vector<interval> d_B(B);
 
     // Initialize the array of endpoints
-    th::transform(d_sub.begin(), d_sub.end(),
+    th::transform(d_A.begin(), d_A.end(),
                   th::make_zip_iterator(d_endpoints.begin(), d_endpoints.begin() + n),
-                  make_endpoint(endpoint::SUBSCRIPTION));
-    th::transform(d_upd.begin(), d_upd.end(),
+                  make_endpoint(endpoint::SET_A));
+    th::transform(d_B.begin(), d_B.end(),
                   th::make_zip_iterator(d_endpoints.begin() + 2*n, d_endpoints.begin() + 2*n + m),
-                  make_endpoint(endpoint::UPDATE));
+                  make_endpoint(endpoint::SET_B));
 
     th::sort(d_endpoints.begin(), d_endpoints.end());
 
     /* left_idx[i] is the position (index) in the sorted endpoint
-       array of the left endpoint of subscription interval with id==i;
+       array of the left endpoint of the interval in A with id==i;
 
        right_idx[i] is the position (index) in the sorted endpoint
-       array of the right endpoint of subscription interval with
-       id==i; */
+       array of the right endpoint of the interval in A with id==i; */
     th::device_vector<int> left_idx(n), right_idx(n);
 
     th::for_each( th::make_counting_iterator<int>(0),
                   th::make_counting_iterator<int>(n_endpoints),
                   init_idx<th::device_vector<endpoint>::const_iterator, th::device_vector<int>::iterator>(d_endpoints.begin(), left_idx.begin(), right_idx.begin()) );
 
-    /* n_upd_open[i] is the number of open update endpoints up to and
-       including position i in the array */
-    th::device_vector<int> open_count(n_endpoints);
-    /* n_upd_closed[i] is the number of closed update endpoints up to
-       and including position i in the array */
-    th::device_vector<int> closed_count(n_endpoints);
+    /* nleft[i] is the number of left endpoints in B up to and
+       including position i in the array of sorted endpoints */
+    th::device_vector<int> nleft(n_endpoints);
+    /* nright[i] is the number of right endpoints in B up to and
+       including position i in the array of sorted endpoints */
+    th::device_vector<int> nright(n_endpoints);
 
     th::transform_inclusive_scan( d_endpoints.begin(), d_endpoints.end(),
-                                  open_count.begin(),
-                                  init_count(endpoint::UPDATE, endpoint::LOWER),
+                                  nleft.begin(),
+                                  init_count(endpoint::SET_B, endpoint::LEFT),
                                   th::plus<int>() );
     th::transform_inclusive_scan( d_endpoints.begin(), d_endpoints.end(),
-                                  closed_count.begin(),
-                                  init_count(endpoint::UPDATE, endpoint::UPPER),
+                                  nright.begin(),
+                                  init_count(endpoint::SET_B, endpoint::RIGHT),
                                   th::plus<int>() );
 
     th::device_vector<int> d_counts(n);
 
-    th::transform( d_sub.begin(), d_sub.end(),
+    th::transform( d_A.begin(), d_A.end(),
                    d_counts.begin(),
-                   compute_counts<th::device_vector<int>::const_iterator>(left_idx.begin(), right_idx.begin(), open_count.begin(), closed_count.begin() ) );
+                   compute_counts<th::device_vector<int>::const_iterator>(left_idx.begin(), right_idx.begin(), nleft.begin(), nright.begin() ) );
 
-    /* copy the result from device memory to the `counts` array */
     th::copy(d_counts.begin(), d_counts.end(), counts.begin());
 
     const int n_intersections = th::reduce(d_counts.begin(), d_counts.end(), 0);
