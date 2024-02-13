@@ -59,8 +59,8 @@ void init( vector<interval> &v, int n )
     for (int i=0; i<n; i++) {
         interval intrv;
         intrv.id = i;
-        intrv.lower = randab(-100000, 100000);
-        intrv.upper = intrv.lower + randab(10,1000);
+        intrv.left = randab(-100000, 100000);
+        intrv.right = intrv.left + randab(10,1000);
         intrv.payload = 0;
         v.push_back(intrv);
     }
@@ -91,8 +91,8 @@ void test_with_bam_and_bed( const char* bam_file_name, const char *bed_file_name
     while (sam_read1(fp_in,bamHdr,aln) > 0) {
         interval i;
         i.id = 0;
-        i.lower = aln->core.pos + 1;
-        i.upper = aln->core.pos + aln->core.l_qseq;
+        i.left = aln->core.pos + 1;
+        i.right = aln->core.pos + aln->core.l_qseq;
         i.payload = 0;
         alignments[aln->core.tid].push_back(i);
     }
@@ -117,8 +117,8 @@ void test_with_bam_and_bed( const char* bam_file_name, const char *bed_file_name
         int32_t tid = chrom_str2tid.at(chrom_str2tid.count(chrom_str) ? chrom_str : chrom_str.substr(3));
         interval i;
         i.id = 0;
-        i.lower = start;
-        i.upper = end;
+        i.left = start;
+        i.right = end;
         i.payload = 0;
         targets[tid].push_back(i);
     }
@@ -149,16 +149,16 @@ void test_with_bam_and_bed( const char* bam_file_name, const char *bed_file_name
                     for (int32_t pos = t->left; pos < t->right; pos++) {
                         interval i;
                         i.id = id++;
-                        i.lower = pos;
-                        i.upper = pos + 1;
+                        i.left = pos;
+                        i.right = pos + 1;
                         i.payload = 0;
                         windows.push_back(i);
                     }
 #else
                     interval i;
                     i.id = id++;
-                    i.lower = t->left;
-                    i.upper = t->right;
+                    i.left = t->left;
+                    i.right = t->right;
                     i.payload = 0;
                     windows.push_back(i);
 #endif
