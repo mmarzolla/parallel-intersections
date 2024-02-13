@@ -146,7 +146,7 @@ void test_with_bam_and_bed( const char* bam_file_name, const char *bed_file_name
                     // The following loop replaces an interval [a, b] with
                     // a set of non-overlapping unitary intervals [a,
                     // a+1], [a+1, a+2], ... [b-1, b]
-                    for (int32_t pos = t->lower; pos < t->upper; pos++) {
+                    for (int32_t pos = t->left; pos < t->right; pos++) {
                         interval i;
                         i.id = id++;
                         i.lower = pos;
@@ -157,8 +157,8 @@ void test_with_bam_and_bed( const char* bam_file_name, const char *bed_file_name
 #else
                     interval i;
                     i.id = id++;
-                    i.lower = t->lower;
-                    i.upper = t->upper;
+                    i.lower = t->left;
+                    i.upper = t->right;
                     i.payload = 0;
                     windows.push_back(i);
 #endif
