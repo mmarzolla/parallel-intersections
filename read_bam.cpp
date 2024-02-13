@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
             // split target intervals into 1-base windows
             vector<interval> windows;
             for (auto t = targets.at(tid).begin(); t != targets.at(tid).end(); t++)
-                for (int32_t pos = t->lower; pos < t->upper; pos++) {
+                for (int32_t pos = t->left; pos < t->right; pos++) {
                     interval i;
                     i.id = 0;
                     i.left = pos;
