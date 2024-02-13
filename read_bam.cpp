@@ -2,7 +2,8 @@
  *
  * read_bam.cpp - test program to read a BAM file
  *
- * Copyright (C) 2022, 2023 Moreno Marzolla, Giovanni Birolo, Gabriele D'Angelo, Piero Fariselli
+ * Copyright (C) 2022, 2023, 2024
+ * Moreno Marzolla, Giovanni Birolo, Gabriele D'Angelo, Piero Fariselli
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,8 +60,8 @@ int main(int argc, char *argv[])
     while (sam_read1(fp_in,bamHdr,aln) > 0) {
         interval i;
         i.id = 0;
-        i.lower = aln->core.pos + 1;
-        i.upper = aln->core.pos + aln->core.l_qseq;
+        i.left = aln->core.pos + 1;
+        i.right = aln->core.pos + aln->core.l_qseq;
         i.payload = 0;
         alignments[aln->core.tid].push_back(i);
     }
@@ -81,8 +82,8 @@ int main(int argc, char *argv[])
         int32_t tid = chrom_str2tid.at(chrom_str2tid.count(chrom_str) ? chrom_str : chrom_str.substr(3));
         interval i;
         i.id = 0;
-        i.lower = start;
-        i.upper = end;
+        i.left = start;
+        i.right = end;
         i.payload = 0;
         targets[tid].push_back(i);
     }
@@ -100,8 +101,8 @@ int main(int argc, char *argv[])
                 for (int32_t pos = t->lower; pos < t->upper; pos++) {
                     interval i;
                     i.id = 0;
-                    i.lower = pos;
-                    i.upper = pos + 1;
+                    i.left = pos;
+                    i.right = pos + 1;
                     i.payload = 0;
                     windows.push_back(i);
                 }
