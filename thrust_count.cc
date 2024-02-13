@@ -148,7 +148,7 @@ size_t count_intersections(const std::vector<interval> &A,
                            std::vector<int> &counts )
 {
     const size_t n = A.size();
-    const size_t m = A.size();
+    const size_t m = B.size();
     const size_t n_endpoints = 2*(n+m);
     counts.resize(n);
 #if THRUST_DEVICE_SYSTEM==THRUST_DEVICE_SYSTEM_OMP
