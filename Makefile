@@ -62,7 +62,7 @@ help:
 	@echo "test.big   test with the \"big\" dataset"
 	@echo
 
-all: read_bam $(EXES)
+all: $(EXES)
 
 serial: $(EXE_SEQ)
 
@@ -76,7 +76,7 @@ tests: ${EXES}
 	./test_wct.sh
 	./test_speedup.sh
 
-check: read_bam $(EXES)
+check: $(EXES)
 	for ALGO in $(EXES); do \
 		./$${ALGO} -m panel_01.bam -d target.bed ; \
 	done
