@@ -4,7 +4,10 @@ This repository contains the implementation of the parallel
 intersection-counting algorithm described in the paper:
 
 > M. Marzolla, G. Birolo, G. D'Angelo, P. Fariselli, "Parallel
-> Intersection Counting on Shared-Memory Multiprocessors and GPUs"
+> Intersection Counting on Shared-Memory Multiprocessors and GPUs",
+> Future Generation Computer Systems volume 159, october 2024,
+> pp. 423-431, ISSN 0167-739X. DOI
+> [j.future.2024.05.039](https://doi.org/10.1016/j.future.2024.05.039)
 
 ## Requirements
 
@@ -40,15 +43,16 @@ directory:
     cd ~/src
     git clone --recursive https://github.com/NVIDIA/thrust.git
 
-The Makefile assumes that Thrust is installed in `~/src/thrust`, but
-you can change this by modifying the value of `THRUST_INCLUDE_PATH` in
-the Makefile. You don't need to compile anything: Thrust is a
-headers-only library.
+You don't need to compile anything: Thrust is a headers-only library.
+
+The present repository assumes that Thrust is installed in
+`~/src/thrust`, but you can change this by modifying the value of
+`THRUST_INCLUDE_PATH` in the Makefile.
 
 ### Step 2 (optional)
 
 To replicate the tests described in the paper, you need to fetch the
-input data into `~/src/intersections-data/` and unpack it using the
+input data into `~/src/intersections-data/` and unpack them using the
 following commands:
 
     wget https://si-clusterraspberry.csr.unibo.it/downloads/intersections-data.tar.gz
@@ -66,31 +70,32 @@ Clone this repository and build all executables:
     cd parallel-intersections
     make all
 
-Tree programs should be built: `intersections_thrust_seq` (serial
+Four programs should be built: `intersections_thrust_seq` (serial
 version), `intersections_thrust_omp` (OpenMP version for CPU),
-`intersections_thrust_cuda` (CUDA version for the GPU).
+`intersections_thrust_cuda` (CUDA version for the GPU) and
+`intersections_stl` (parallel STL version for the CPU).
 
 ### Step 4
 
-Do a quick test to see if everything works:
+Perform a quick check to see if everything works:
 
     make check
 
 ### Step 5 (optional)
 
-Test the sequential, OpenMP and CUDA intersection-counting algorithms
-with the `Chr21` and `Exome` datasets from step 2 above:
+Test all implementations with the `Chr21` and `Exome` datasets from
+step 2 above:
 
-    make check.med
-    make check.big
+    make test.med
+    make test.big
 
 ## Known issues
 
-There seems to be [issues](https://github.com/NVIDIA/nccl/issues/102)
-with the NVidia C compiler bundled with Ubuntu 22.04: the serial and
-OpenMP versions of the parallel intersection-counting program compile
-and run fine, but the CUDA version does not compile due to the
-following error:
+There are [issues](https://github.com/NVIDIA/nccl/issues/102) with the
+NVidia C compiler bundled with Ubuntu 22.04: the serial and OpenMP
+versions of the parallel intersection-counting program compile and run
+fine, but the CUDA version does not compile due to the following
+error:
 
 ```
 /usr/include/c++/11/bits/std_function.h:435:145: error: parameter packs not expanded with ‘...’:
