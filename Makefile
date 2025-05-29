@@ -45,6 +45,8 @@ EXES:=$(EXE_SEQ) $(EXE_OMP) $(EXE_STL) $(EXE_CUDA)
 # Use the C++ compiler instead of C to link object files
 LINK.o = $(LINK.cc)
 
+all: $(EXES)
+
 help:
 	@echo
 	@echo "Available targets:"
@@ -61,8 +63,6 @@ help:
 	@echo "test.med   test with the \"medium\" dataset"
 	@echo "test.big   test with the \"big\" dataset"
 	@echo
-
-all: $(EXES)
 
 serial: $(EXE_SEQ)
 

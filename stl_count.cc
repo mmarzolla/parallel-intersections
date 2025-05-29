@@ -2,7 +2,7 @@
  *
  * stl_count.cc - count intersections using the Standard Template Library
  *
- * Copyright (C) 2024
+ * Copyright (C) 2024, 2025
  * Moreno Marzolla
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,7 +23,6 @@
 #include <string>
 #include <vector>
 #include <cassert>
-#include <functional>
 #include <iterator>
 #include <numeric>
 #include <algorithm>
@@ -33,8 +32,7 @@
 #include "utils.hh"
 #include "count_intersections.hh"
 
-struct make_left_endpoint :
-    public std::unary_function< const interval &, endpoint >
+struct make_left_endpoint
 {
     endpoint::ep_type t;
 
@@ -46,8 +44,7 @@ struct make_left_endpoint :
     }
 };
 
-struct make_right_endpoint :
-    public std::unary_function< const interval &, endpoint >
+struct make_right_endpoint
 {
     endpoint::ep_type t;
 
